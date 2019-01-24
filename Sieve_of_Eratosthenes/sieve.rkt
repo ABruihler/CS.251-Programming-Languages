@@ -31,11 +31,22 @@
       ((equal? n 1) (car lazy-list))
       (else (nth ((cdr lazy-list)) (- n 1))))))
 
+;; TODO
+(define filter-multiples
+  (lambda (lazy-list n)
+    (cond
+      ((not lazy-list) ())
+      ((zero? (modulo (car lazy-list) n)) (filter-multiples ((cdr lazy-list)) n))
+      (else (cons
+         (car lazy-list)
+         (filter-multiples ((cdr lazy-list)) n))))))
+
+
 
 ;; Tests below
 
 (require racket/trace)
-;;(trace nth)
+;;(trace filter-multiples)
 
 (first-n (seq 1 10) 0) ;; () (doesn't even need to be handled but it turns out I do)
 (first-n (seq 1 10) 1) ;; (1)
@@ -48,3 +59,9 @@
 (nth (seq 1 10) 5) ;; 5
 (nth (seq 1 10) 10) ;; 10
 (nth (seq 1 10) 11) ;; #f
+
+(newline)
+(filter-multiples (seq 2 6) 2) ;; (3 5)
+(filter-multiples (seq 3 8) 3) ;; (4 5 7 8)
+(filter-multiples (seq 1 10) 11) ;; (1 2 3 4 5 6 7 8 9 10)
+(filter-multiples (seq 1 10) 1) ;; ()
