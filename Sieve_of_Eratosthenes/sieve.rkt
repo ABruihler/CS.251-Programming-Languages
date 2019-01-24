@@ -31,7 +31,7 @@
       ((equal? n 1) (car lazy-list))
       (else (nth ((cdr lazy-list)) (- n 1))))))
 
-;; TODO
+;; Filters out multiples of n from the given lazy list (including n itself)
 (define filter-multiples
   (lambda (lazy-list n)
     (cond
@@ -41,28 +41,30 @@
          (car lazy-list)
          (lambda () (filter-multiples ((cdr lazy-list)) n)))))))
 
+;; Returns a lazy list with all multiples of the first element removed (except for the element itself)
 (define sieve
   (lambda (lazy-list)
     (cons
      (car lazy-list)
      (lambda () (filter-multiples ((cdr lazy-list)) (car lazy-list))))))
 
+;; Helper method for primes to allow recursion
 (define primes-helper
   (lambda (lazy-list)
     (cons
      (car lazy-list)
-     (lambda () (primes-helper(sieve ((cdr lazy-list))))))))
+     (lambda () (primes-helper (sieve ((cdr lazy-list))))))))
 
-;; TODO
+;; Returns a lazy list of primes calculated using the Sieve of Eratosthenes
 (define primes
   (lambda ()
-    (primes-helper (inf-seq 2))))
+    ((cdr (primes-helper (inf-seq 1)))))) ;; (inf-seq) needs to start with 1 otherwise 4 is reported as prime.
 
 
 ;; Tests below
 
-(require racket/trace)
-;;(trace filter-multiples)
+;;(require racket/trace)
+;;(trace primes)
 
 (first-n (seq 1 10) 0) ;; () (doesn't even need to be handled but it turns out I do)
 (first-n (seq 1 10) 1) ;; (1)
@@ -83,4 +85,5 @@
 (filter-multiples (seq 1 10) 1) ;; ()
 
 (newline)
-(first-n (primes) 20)
+(first-n (primes) 10)
+(nth (primes) 20)
