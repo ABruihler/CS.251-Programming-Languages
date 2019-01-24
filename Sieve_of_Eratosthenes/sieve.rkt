@@ -60,6 +60,19 @@
   (lambda ()
     ((cdr (primes-helper (inf-seq 1)))))) ;; (inf-seq) needs to start with 1 otherwise 4 is reported as prime.
 
+;; Helper function for count-smaller-primes to allow recursion
+(define count-smaller-primes-helper
+  (lambda (lazy-list n)
+    (cond
+      ((not lazy-list) 0)
+      ((>= (car lazy-list) n) 0)
+      (else (+ 1 (count-smaller-primes-helper ((cdr lazy-list)) n))))))
+
+;; Counts the number of primes less than the given int
+(define count-smaller-primes
+  (lambda (n)
+    (count-smaller-primes-helper (primes) n)))
+
 
 ;; Tests below
 
@@ -85,5 +98,12 @@
 (filter-multiples (seq 1 10) 1) ;; ()
 
 (newline)
-(first-n (primes) 10)
-(nth (primes) 20)
+(first-n (primes) 10) ;; (2 3 5 7 11 13 17 19 23 29)
+(nth (primes) 20) ;; 71
+
+(newline)
+(count-smaller-primes 11) ;; 4
+(count-smaller-primes 3) ;; 1
+(count-smaller-primes 2) ;; 0
+(count-smaller-primes -1) ;; 0
+(count-smaller-primes 20) ;; 8
