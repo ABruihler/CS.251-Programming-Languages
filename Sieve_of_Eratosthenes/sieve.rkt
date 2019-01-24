@@ -39,8 +39,24 @@
       ((zero? (modulo (car lazy-list) n)) (filter-multiples ((cdr lazy-list)) n))
       (else (cons
          (car lazy-list)
-         (filter-multiples ((cdr lazy-list)) n))))))
+         (lambda () (filter-multiples ((cdr lazy-list)) n)))))))
 
+(define sieve
+  (lambda (lazy-list)
+    (cons
+     (car lazy-list)
+     (lambda () (filter-multiples ((cdr lazy-list)) (car lazy-list))))))
+
+(define primes-helper
+  (lambda (lazy-list)
+    (cons
+     (car lazy-list)
+     (lambda () (primes-helper(sieve ((cdr lazy-list))))))))
+
+;; TODO
+(define primes
+  (lambda ()
+    (primes-helper (inf-seq 2))))
 
 
 ;; Tests below
@@ -65,3 +81,6 @@
 (filter-multiples (seq 3 8) 3) ;; (4 5 7 8)
 (filter-multiples (seq 1 10) 11) ;; (1 2 3 4 5 6 7 8 9 10)
 (filter-multiples (seq 1 10) 1) ;; ()
+
+(newline)
+(first-n (primes) 20)
